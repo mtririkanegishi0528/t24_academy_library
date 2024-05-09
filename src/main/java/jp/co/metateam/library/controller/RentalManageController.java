@@ -63,8 +63,8 @@ public class RentalManageController {
         List <Account> accounts = this.accountService.findAll();
         List <Stock> stockList = this.stockService.findAll();
     
-        model.addAttribute("account", accounts);
-        model.addAttribute("stock", stockList);
+        model.addAttribute("accounts", accounts);
+        model.addAttribute("stockList", stockList);
         model.addAttribute("rentalStatus", RentalStatus.values());
     
         if (!model.containsAttribute("rentalManageDto")) {
