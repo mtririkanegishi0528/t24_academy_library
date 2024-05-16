@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.validation.Valid;
 import jp.co.metateam.library.model.Account;
+import jp.co.metateam.library.model.BookMst;
 import jp.co.metateam.library.model.RentalManage;
 import jp.co.metateam.library.model.RentalManageDto;
 import jp.co.metateam.library.model.Stock;
@@ -87,5 +89,38 @@ public class RentalManageService {
         }
 
         return rentalManage;
+    }
+
+    @Transactional
+    public void update(Long id, RentalManageDto rentalManageDto) throws Exception {
+         try {
+            RentalManage rentalManage = this.rentalManageRepository.findById(id).orElse(null);
+            if (rentalManage == null) {
+                throw new Exception("RentalManage record not found.");
+            }
+            Account account = this.accountRepository.findByEmployeeId(rentalManageDto.getEmployeeId()).orElse(null);
+            if (account == null) {
+                throw new Exception("Account record not found.");
+            }
+
+            Stock stock = this.stockRepository.findById(rentalManageDto.getStockId()).orElse(null);
+            if (stock == null) {
+                throw new Exception("Stock record not found.");
+            }
+            
+            rentalManage = setRentalStatusDate(rentalManage, rentalManageDto.getStatus());
+
+            rentalManageDto.setId(rentalManage.getId());
+            rentalManage.setAccount(account);
+            rentalManage.setExpectedRentalOn(rentalManageDto.getExpectedRentalOn());
+            rentalManage.setExpectedReturnOn(rentalManageDto.getExpectedReturnOn());
+            rentalManage.setStock(stock);
+            rentalManage.setStatus(rentalManageDto.getStatus());
+
+            // データベースへの保存
+            this.rentalManageRepository.save(rentalManage);
+        } catch (Exception e) {
+            throw e;
+        }
     }
 }
