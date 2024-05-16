@@ -1,6 +1,7 @@
 package jp.co.metateam.library.controller;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +22,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 import jakarta.validation.Valid;
 import jp.co.metateam.library.values.RentalStatus;
 import jp.co.metateam.library.values.StockStatus;
@@ -139,6 +142,7 @@ public class RentalManageController {
                 return "redirect:/rental/"+ id +"/edit";
             }
 
+            rentalManageDto.dateCheck();
 
             // 変更処理
             rentalManageService.update(Long.valueOf(id), rentalManageDto);
@@ -157,6 +161,7 @@ public class RentalManageController {
 
             ra.addFlashAttribute("rentalmanageDto", rentalManageDto);
             ra.addFlashAttribute("org.springframework.validation.BindingResult.rentalManageDto", result);
+            ra.addFlashAttribute("error1", e.getMessage());
 
             return "redirect:/rental/"+id+"/edit";
         }
